@@ -12,6 +12,6 @@ Most of this was developed when I was in high school, so the code isn't the best
 While continuing to add new features, I definitely also plan to go back and refurbish some things.
 
 ## Controls
-M to open the map
-WASD for movement (only on the map)
-Click cards for casting options
+- M to open the map
+- WASD for movement (only on the map)
+- Click cards for casting options
