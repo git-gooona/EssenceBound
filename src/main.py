@@ -111,6 +111,23 @@ def floor_redrawAll(app):
     current_room = "straight_hallway"
     drawImage(scene.floor_media[scene.target_destination][current_room][0], app.top_left_x, app.top_left_y, opacity = scene.floor_opacity) # background
 
+    # based off app.floor.current_event
+    match app.floor.current_event:
+        case "standard":
+            pass # add draw room function calls
+        case "elite":
+            pass
+        case "boss":
+            pass
+        case "shop":
+            pass
+        case "origin":
+            pass
+        case "creepy_corridor": # how to handle dynamic events??
+            pass
+        case "suspicious_sounds":
+            pass
+
 def floor_onStep(app):
     if scene.floor_opacity < 100 and not scene.floor_initialized: # opacity handler
         scene.floor_opacity += 5
@@ -174,6 +191,7 @@ def map_onKeyPress(app, key):
         scene.map_transitioning = True
     if app.battle == None:
         app.floor.player_position = app.floor.move_tile(app.floor.player_position, key)
+        app.floor.current_event = app.floor.event_handler(app.floor.player_position)
 
 def map_onMousePress(app, mouse_x, mouse_y):
     pass

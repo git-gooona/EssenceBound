@@ -37,6 +37,7 @@ crypt_template = {
     "enemies": ["skeleton_archer", "skeleton_warrior"],
     "items": ["health_vial", "mana_vial", "stamina_vial", "ancient_tablets"],
     "quests": ["crypt_quest"],
+    "events": ["creepy_corridor", "suspicious_sounds"],
     "gradient": ('black','darkGreen','forestGreen','darkGreen','black')
 }
 

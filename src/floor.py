@@ -5,7 +5,9 @@ import data
 class Floor:
     def __init__(self, floor):
         self.floor = floor
+        self.current_event = None
         self.enemies = data.floor_templates[floor]["enemies"].copy()
+        self.events = data.floor_templates[floor]["events"].copy()
         self.items = data.floor_templates[floor]["items"].copy()
         self.quests = data.floor_templates[floor]["quests"].copy()
 
@@ -116,3 +118,14 @@ class Floor:
 
         else:
             return player_x, player_y
+
+    def event_handler(self, player_position):
+        player_x, player_y = player_position
+        for tile in self.tiles:
+            if (tile["column"] * self.tile_size) == player_x and (tile["row"] * self.tile_size) == player_y:
+                if tile["visited"]:
+                    return "standard"
+                elif tile["type"] != "event":
+                    return tile["type"]
+                else:
+                    return random.choice(self.events)
