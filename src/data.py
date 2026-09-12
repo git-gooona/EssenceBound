@@ -37,7 +37,9 @@ crypt_template = {
     "enemies": ["skeleton_archer", "skeleton_warrior"],
     "items": ["health_vial", "mana_vial", "stamina_vial", "ancient_tablets"],
     "quests": ["crypt_quest"],
-    "events": ["creepy_corridor", "suspicious_sounds"],
+    "paths": {"straight": media.crypt_straight_hallway_images, "right": media.crypt_right_hallway_images, "left": media.crypt_left_hallway_images, "two": media.crypt_two_way_hallway_images, "three": media.crypt_three_way_hallway_images},
+    "events": media.crypt_event_images,
+    "shops": media.crypt_shop_images,
     "gradient": ('black','darkGreen','forestGreen','darkGreen','black')
 }
 

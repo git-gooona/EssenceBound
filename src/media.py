@@ -61,8 +61,8 @@ crypt_three_way_hallway_images = [str(CRYPT_DIR / "three_way_corridor.png")]
 crypt_event_images = [str(CRYPT_DIR / "creepy_corridor.png"),
                       str(CRYPT_DIR / "sounds_corridor.png")]
 
-crypt_shop_images = [str(CRYPT_DIR / "shop" / "shop_one"),
-                     str(CRYPT_DIR / "shop" / "shop_two")]
+crypt_shop_images = [str(CRYPT_DIR / "shop" / "shop_one.png"),
+                     str(CRYPT_DIR / "shop" / "shop_two.png")]
 
 # GUI
 alchemy_kit_image = str(GUI_DIR / "icons" / "buttons" / "alchemy_kit.png")

@@ -23,7 +23,7 @@ class Floor:
 
         starting_row = random.randrange(self.rows) # initialize a position to begin generation at
         starting_column = random.randrange(self.columns)
-        self.tiles.append({"row": starting_row, "column": starting_column, "type": "origin", "visited": True, "icon": data.map_icons["origin"]})
+        self.tiles.append({"row": starting_row, "column": starting_column, "type": "origin", "visited": True, "icon": data.map_icons["origin"], "sprite": random.choice(data.floor_templates[floor]["paths"]["straight"])})
         self.player_position = (starting_column * self.tile_size, starting_row * self.tile_size) # coordinates of the player starting position
 
         row = starting_row
@@ -67,7 +67,7 @@ class Floor:
             chosen_direction = random.choice(self.generator_stack[-1]["valid_directions"]) # chooses a random valid direction
             row += chosen_direction[0]
             column += chosen_direction[1]
-            self.tiles.append({"row": row, "column": column, "type": "standard", "visited": False, "icon": None}) # populates self.tiles
+            self.tiles.append({"row": row, "column": column, "type": "standard", "visited": False, "icon": None, "sprite": random.choice(data.floor_templates[floor]["paths"]["straight"])}) # populates self.tiles
 
 
         for tile_type, info in possible_tile_types.items(): # adds tile types into the generated tiles
@@ -82,6 +82,20 @@ class Floor:
                 for tile in random.sample(available_tiles, amount): # here we change an amount of tiles to the chosen types, which we randomly got earlier
                     tile["type"] = tile_type
                     tile["icon"] = data.map_icons[str(tile_type)]
+                    if tile_type == "event":
+                        tile["sprite"] = random.choice(data.floor_templates[floor]["events"])
+                    elif tile_type == "shop":
+                        tile["sprite"] = random.choice(data.floor_templates[floor]["shops"]) # add custom media for these
+                    elif tile_type == "quest":
+                        tile["sprite"] = random.choice(data.floor_templates[floor]["paths"]["straight"])
+                    elif tile_type == "elite":
+                        tile["sprite"] = random.choice(data.floor_templates[floor]["paths"]["straight"])
+                    elif tile_type == "boss":
+                        tile["sprite"] = random.choice(data.floor_templates[floor]["paths"]["straight"])
+                    elif tile_type == "standard":
+                        tile["sprite"] = random.choice(data.floor_templates[floor]["paths"]["straight"])
+                    else:
+                        continue # incase of new tile types
 
 
     def move_tile(self, player_position, key):
@@ -119,13 +133,22 @@ class Floor:
         else:
             return player_x, player_y
 
+    def tile_update(self, player_position):
+        for tile in self.tiles:
+            if player_position[0] in range(tile["column"] * self.tile_size, (tile["column"] * self.tile_size) + self.tile_size) and player_position[1] in range(tile["row"] * self.tile_size, (tile["row"] * self.tile_size) + self.tile_size):
+                if not tile["visited"]:
+                    tile["visited"] = True
+                    if  tile["type"] == "standard" and random.random() < 0.1:
+                        #generate_enemy
+                        pass
+
     def event_handler(self, player_position):
         player_x, player_y = player_position
         for tile in self.tiles:
             if (tile["column"] * self.tile_size) == player_x and (tile["row"] * self.tile_size) == player_y:
-                if tile["visited"]:
-                    return "standard"
-                elif tile["type"] != "event":
+                if tile["type"] != "event":
                     return tile["type"]
+                elif tile["visited"] == False:
+                    return random.choice(self.events) # instead of random make it based off the sprite of the tile
                 else:
-                    return random.choice(self.events)
+                    return "standard"

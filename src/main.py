@@ -23,17 +23,20 @@ def onAppStart(app):
     app.bottom_right_x, app.bottom_right_y = data.bottom_right_xy
     app.midpoint_x, app.midpoint_y = data.midpoint_xy
 
+    app.screen_width = 1920
+    app.screen_height = 1080
+
     app.current_screen = "start"
 
     for i in range(0,160):
-        scene.flames.append({"x": random.randint(0, 1920), "y": random.randint(1180, 2400), "speed": random.randint(3, 5), "color": None, "flame_timer": 0, "direction_bit": 1}) # flame vfx
+        scene.flames.append({"x": random.randint(0, app.screen_width), "y": random.randint(1180, 2400), "speed": random.randint(3, 5), "color": None, "flame_timer": 0, "direction_bit": 1}) # flame vfx
 
 
 
 def start_redrawAll(app):
     drawImage(media.home_room_background_image, app.top_left_x, app.top_left_y)
 
-    drawRect(0, 0, 1920, 1080, fill = gradient("black", "navy"), opacity = scene.title_opacity) # background
+    drawRect(0, 0, app.screen_width, app.screen_height, fill = gradient("black", "navy"), opacity = scene.title_opacity) # background
 
     for flame in scene.flames:
         drawRect(flame["x"], flame["y"], 10, 25, fill = flame["color"], opacity = scene.title_opacity) # flame vfx
@@ -54,7 +57,7 @@ def start_onStep(app):
             flame["direction_bit"] *= -1
         flame["color"] = scene.get_flame_color(flame["flame_timer"])
         if flame["y"] < -25:
-            flame["y"] = random.randint(1080, 2000)
+            flame["y"] = random.randint(app.screen_height, 2000)
 
     if scene.augmented_y <= -20: # title text motion
         scene.direction_bit *= -1
@@ -108,25 +111,19 @@ def main_onMousePress(app, mouse_x, mouse_y):
 
 
 def floor_redrawAll(app):
-    current_room = "straight_hallway"
-    drawImage(scene.floor_media[scene.target_destination][current_room][0], app.top_left_x, app.top_left_y, opacity = scene.floor_opacity) # background
+    for tile in app.floor.tiles:
+        if app.floor.player_position[0] in range(tile["column"] * app.floor.tile_size, (tile["column"] * app.floor.tile_size) + app.floor.tile_size) and app.floor.player_position[1] in range(tile["row"] * app.floor.tile_size, (tile["row"] * app.floor.tile_size) + app.floor.tile_size):
+            drawImage(tile["sprite"], app.top_left_x, app.top_left_y, opacity = scene.floor_opacity) # background
 
-    # based off app.floor.current_event
+    # based off app.floor.current_event # like quest will result in a 40 opacity black film quest dim - shop overlay - boss ui - origin exit
     match app.floor.current_event:
-        case "standard":
-            pass # add draw room function calls
-        case "elite":
-            pass
-        case "boss":
-            pass
+        case "quest":
+            drawRect(app.top_left_x, app.top_left_y, app.screen_width, app.screen_height, fill = "black", opacity = 40)
         case "shop":
-            pass
+            drawLabel("Money", app.midpoint_x, app.midpoint_y + (0.25 * app.screen_height), size = 40, fill = "gold", opacity = scene.floor_opacity)
         case "origin":
-            pass
-        case "creepy_corridor": # how to handle dynamic events??
-            pass
-        case "suspicious_sounds":
-            pass
+            drawLabel("Exit", app.midpoint_x, app.midpoint_y + (0.25 * app.screen_height), size = 40, fill = "red", opacity = scene.floor_opacity)
+
 
 def floor_onStep(app):
     if scene.floor_opacity < 100 and not scene.floor_initialized: # opacity handler
@@ -151,7 +148,7 @@ def floor_onMousePress(app, mouse_x, mouse_y):
 
 
 def map_redrawAll(app):
-    drawRect(app.top_left_x, app.top_left_y, 1920, 1080, fill = gradient("black", "darkGreen","forestGreen","darkGreen","black",start="top"), opacity = scene.map_opacity) # background
+    drawRect(app.top_left_x, app.top_left_y, app.screen_width, app.screen_height, fill = gradient("black", "darkGreen","forestGreen","darkGreen","black",start="top"), opacity = scene.map_opacity) # background
 
     for tile in app.floor.tiles:
         x = tile["column"] * app.floor.tile_size + scene.map_offset_x
@@ -182,16 +179,13 @@ def map_onStep(app):
         scene.map_transitioning = False
         setActiveScreen("floor")
 
-    for tile in app.floor.tiles: # update tile data
-        if app.floor.player_position[0] in range(tile["column"] * app.floor.tile_size, (tile["column"] * app.floor.tile_size) + app.floor.tile_size) and app.floor.player_position[1] in range(tile["row"] * app.floor.tile_size, (tile["row"] * app.floor.tile_size) + app.floor.tile_size):
-            tile["visited"] = True
-
 def map_onKeyPress(app, key):
     if key == "m" and scene.map_initialized:
         scene.map_transitioning = True
     if app.battle == None:
         app.floor.player_position = app.floor.move_tile(app.floor.player_position, key)
         app.floor.current_event = app.floor.event_handler(app.floor.player_position)
+        app.floor.tile_update(app.floor.player_position)
 
 def map_onMousePress(app, mouse_x, mouse_y):
     pass
@@ -224,7 +218,7 @@ def gameover_onMousePress(app, mouse_x, mouse_y):
     pass
 
 def main():
-    runAppWithScreens(initialScreen='start', width = 1920, height = 1080)
+    runAppWithScreens(initialScreen="start", width = 1920, height = 1080)
 
 def hits_shape(mouse_x, mouse_y, starting_x, width, starting_y, height):
     if mouse_x in range(int(starting_x), int(starting_x) + width) and mouse_y in range(int(starting_y), int(starting_y) + height):

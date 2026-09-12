@@ -1,24 +1,9 @@
 from cmu_graphics import rgb
 
-import random
-
 import data
-import media
 
 # universal attributes
 target_destination = None
-
-floor_media = {
-    "crypt": {
-        "straight_hallway": media.crypt_straight_hallway_images,
-        "right_hallway": media.crypt_right_hallway_images,
-        "left_hallway": media.crypt_left_hallway_images,
-        "two_way_hallway": media.crypt_two_way_hallway_images,
-        "three_way_hallway": media.crypt_three_way_hallway_images,
-        "event": media.crypt_event_images,
-        "shop": media.crypt_shop_images
-    }
-}
 
 scene_mapper = { # points to the correct screen based off the target destination
     "crypt": "floor"
@@ -67,3 +52,5 @@ map_opacity = 0
 # map offset
 map_offset_x = 80
 map_offset_y = 120
+
+# shop ui
