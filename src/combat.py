@@ -10,7 +10,7 @@ def alive_check(entity):
         return False
 
 class Battle:
-    def __init__(self, floor, player):
+    def __init__(self, floor, player, possible_enemies):
         self.player = player
         self.floor = floor
 
@@ -23,17 +23,17 @@ class Battle:
         for i in range(player.data["max_hand_size"]):
             player.data["hand"].append(self.deck.pop())
 
-    def battle_start(self):
+        self.battle_start(possible_enemies)
+
+    def battle_start(self, possible_enemies):
         self.active_enemies = []
         self.player_casted_cards = []
         self.player_casted_damage = []
         self.player_casted_status_effects = []
         #self.amount_of_enemies = random.randint(1,2) # Future development
 
-        enemy_name = random.choice(self.floor.enemies)
-        self.enemy_one = enemies.Enemy(data.enemy_templates[enemy_name])
-
-        self.active_enemies.append(self.enemy_one)
+        enemy_name = random.choice(possible_enemies)
+        self.active_enemies.append(enemies.Enemy(data.enemy_templates[enemy_name]))
 
     def turn_start(self):
         for resource, recovery in data.resource_mapping_template.items(): # performs self recovery

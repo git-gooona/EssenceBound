@@ -1,5 +1,6 @@
 import random
 
+import combat
 import data
 
 class Floor:
@@ -133,13 +134,14 @@ class Floor:
         else:
             return player_x, player_y
 
-    def tile_update(self, player_position):
+    def tile_update(self, player_position, player):
         for tile in self.tiles:
             if player_position[0] in range(tile["column"] * self.tile_size, (tile["column"] * self.tile_size) + self.tile_size) and player_position[1] in range(tile["row"] * self.tile_size, (tile["row"] * self.tile_size) + self.tile_size):
                 if not tile["visited"]:
                     tile["visited"] = True
                     if  tile["type"] == "standard" and random.random() < 0.1:
-                        #generate_enemy
+                        return combat.Battle(self.floor, player, self.enemies) # initiate combat
+                    else:
                         pass
 
     def event_handler(self, player_position):

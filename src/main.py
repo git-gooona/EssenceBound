@@ -24,7 +24,7 @@ def onAppStart(app):
     app.shop_scene = scene.Scene(0)
     app.inventory_scene = scene.Scene(0)
 
-    app.hud_scene = scene.Scene(0)
+    app.hud_scene = scene.Scene(100) # needs fading mechanics
     app.combat_scene = scene.Scene(0)
     app.cards_scene = scene.Scene(0)
 
@@ -118,13 +118,38 @@ def floor_redrawAll(app):
         case "quest":
             drawRect(app.top_left_x, app.top_left_y, app.screen_width, app.screen_height, fill = "black", opacity = 40)
         case "shop":
-            drawLabel("Money", app.midpoint_x, app.midpoint_y + (0.25 * app.screen_height), size = 40, fill = "gold", opacity = app.floor_scene.opacity)
+            drawLabel("Money", app.top_left_x + 100, app.top_left_y + 120, size = 40, fill = "gold", opacity = app.floor_scene.opacity)
         case "origin":
             drawLabel("Exit", app.midpoint_x, app.midpoint_y + (0.25 * app.screen_height), size = 40, fill = "red", opacity = app.floor_scene.opacity)
 
+    # hud ui
+    drawRect(app.top_left_x, app.top_left_y, 400, 240, fill = "sienna", opacity = 50) # hud background - # add config for size and for labels/bars
+
+    drawLabel(app.player.data["health"], app.top_left_x + 80, app.top_left_y + 70, size = 50, fill = "red", opacity = app.hud_scene.opacity)
+    drawLabel(app.player.data["mana"], app.top_left_x + 200, app.top_left_y + 70, size = 50, fill = "blue", opacity = app.hud_scene.opacity)
+    drawLabel(app.player.data["stamina"], app.top_left_x + 320, app.top_left_y + 70, size = 50, fill = "gold", opacity = app.hud_scene.opacity)
+
+    drawLabel(app.player.data["health_recovery"], app.top_left_x + 80, app.top_left_y + 170, size = 50, fill = "hotPink", opacity = app.hud_scene.opacity)
+    drawLabel(app.player.data["mana_recovery"], app.top_left_x + 200, app.top_left_y + 170, size = 50, fill = "cyan", opacity = app.hud_scene.opacity)
+    drawLabel(app.player.data["stamina_recovery"], app.top_left_x + 320, app.top_left_y + 170, size = 50, fill = "yellow", opacity = app.hud_scene.opacity)
+
+    # combat ui and enemies
+    if app.battle != None:
+        for i, enemy in enumerate(app.battle.active_enemies):
+            drawRect(i * 200 + 750, app.midpoint_y - 350, (enemy.data["health"] * 4) + 1, 40, fill = 'crimson', border = 'black', borderWidth = 2, opacity = app.combat_scene.opacity) # how to decide the coordinates of enemies? lets do based off list index
+            drawImage(enemy.sprite, ((i * 200) + 750) + enemy.data["offset"][0], (app.midpoint_y - 150) + enemy.data["offset"][1], opacity = app.combat_scene.opacity)
+
+    # cards ui
+    for i, card in enumerate(app.player.data["hand"]):
+        drawImage(data.card_data[card]["sprite"], (app.midpoint_x / 2) + (i * 80), app.bottom_left_y - 200, opacity = app.cards_scene.opacity)
 
 def floor_onStep(app):
     transition(app, "floor", scene.scene_mapper[scene.target_destination])
+
+    if app.battle != None:
+        app.combat_scene.opacity = 100
+    else:
+        app.combat_scene.opacity = 0
 
 def floor_onKeyPress(app, key):
     if key == "m" and app.floor_scene.initialized:
@@ -153,7 +178,7 @@ def map_redrawAll(app):
             drawRect(x, y, app.floor.tile_size, app.floor.tile_size, fill = "pink", border = "silver", opacity = app.map_scene.opacity)
             drawImage(tile["icon"], x, y, opacity = app.map_scene.opacity) # icons
 
-    drawRect((app.floor.player_position[0] + (app.floor.tile_size / 2) - (app.floor.player_width / 2)) + scene.map_offset_x, (app.floor.player_position[1] + (app.floor.tile_size / 2) - (app.floor.player_height / 2)) + scene.map_offset_y, app.floor.player_width, app.floor.player_height, fill = "white") # player
+    drawRect((app.floor.player_position[0] + (app.floor.tile_size / 2) - (app.floor.player_width / 2)) + scene.map_offset_x, (app.floor.player_position[1] + (app.floor.tile_size / 2) - (app.floor.player_height / 2)) + scene.map_offset_y, app.floor.player_width, app.floor.player_height, fill = "white", opacity = app.map_scene.opacity) # player
 
 def map_onStep(app):
     transition(app, "map", scene.scene_mapper[scene.target_destination])
@@ -165,7 +190,7 @@ def map_onKeyPress(app, key):
     if app.battle == None:
         app.floor.player_position = app.floor.move_tile(app.floor.player_position, key)
         app.floor.current_event = app.floor.event_handler(app.floor.player_position)
-        app.floor.tile_update(app.floor.player_position)
+        app.battle = app.floor.tile_update(app.floor.player_position, app.player)
 
 def map_onMousePress(app, mouse_x, mouse_y):
     pass

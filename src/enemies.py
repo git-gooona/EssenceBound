@@ -5,20 +5,18 @@ import data
 
 class Enemy:
     def __init__(self, template):
-        baseX, baseY = data.baseEnemy
         offsetX, offsetY = template["offset"]
 
         self.name = template["name"]
         self.sprite = template["sprite"]
-        self.centerX = baseX + offsetX
-        self.centerY = baseY + offsetY
 
         self.data = {
             "max_health": template["health"],
             "health": template["health"],
             "speed": template["speed"],
             "skills": copy.deepcopy(template["skills"]),
-            "status_effects": []
+            "status_effects": [],
+            "offset": (offsetX, offsetY)
         }
 
     def update_enemy(self, damage, statusEffect, attacker): # make a combat handler to handle combat events with speed.

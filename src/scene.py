@@ -40,5 +40,8 @@ class Scene:
         self.transitioning = False
         self.opacity = opacity
 
+# map offsets
 map_offset_x = 80
 map_offset_y = 120
+
+# combat
