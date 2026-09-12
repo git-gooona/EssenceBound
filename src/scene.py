@@ -6,7 +6,12 @@ import data
 target_destination = None
 
 scene_mapper = { # points to the correct screen based off the target destination
-    "crypt": "floor"
+    "main": "main_scene",
+    "map": "map_scene",
+    "shop": "floor_scene",
+    "floor": "floor_scene",
+    "crypt": "floor_scene",
+    None: None
 }
 
 # title flames
@@ -29,28 +34,11 @@ augmented_x = x + 100
 augmented_y = y
 direction_bit = 1
 
-# title opacity
-title_transitioning = False
-title_opacity = 100
+class Scene:
+    def __init__(self, opacity):
+        self.initialized = False
+        self.transitioning = False
+        self.opacity = opacity
 
-# main opacity
-main_initialized = False
-main_transitioning = False
-main_opacity = 0
-augmented_opacity = 100
-
-# floor opacity
-floor_initialized = False
-floor_transitioning = False
-floor_opacity = 0
-
-# map opacity
-map_initialized = False
-map_transitioning = False
-map_opacity = 0
-
-# map offset
 map_offset_x = 80
 map_offset_y = 120
-
-# shop ui

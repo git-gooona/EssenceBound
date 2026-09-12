@@ -1,1 +1,2 @@
+# This library requires Python 3.11.9 or earlier
 cmu-graphics==1.1.48
